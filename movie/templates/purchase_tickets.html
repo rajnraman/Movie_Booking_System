@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>{{ movie.title }}</h1>
+    <form method="post" action="{% url 'purchase_confirm' movie.id %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="num_tickets">Number of tickets:</label>
+        <input type="number" required id="num_tickets" name="num_tickets" min="1" max="10" value="1" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="theater">Select a theater:</label>
+        <select id="theater" name="theater" class="form-control">
+          <option value="Lubbock Theater">Lubbock Theater</option>
+          <option value="Amarillo Theater">Amarillo Theater</option>
+          <option value="Levelland Theater">Levelland Theater</option>
+          <option value="Plainview Theater">Plainview Theater</option>
+          <option value="Snyder Theater">Snyder Theater</option>
+          <option value="Abilene Theater">Abilene Theater</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="showtime">Select a showtime:</label>
+        <select name="showtime" id="showtime" class="form-control">
+          {% for showtime in showtimes %}
+          <option value="{{ showtime }}">{{ showtime }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="text" name="price" id="price" class="form-control" value="{{ movie.price }}" readonly>
+      </div>
+      <input type="hidden" name="theater_value" id="theater_value">
+      <input type="hidden" name="showtime_value" id="showtime_value">
+      <button type="submit" class="btn btn-primary">Purchase</button>
+    </form>  
+  </div>  
+  <script>
+    // Get the Purchase button
+    const purchaseButton = document.querySelector('.btn-primary');
+
+    // Add an event listener to the Purchase button
+    purchaseButton.addEventListener('click', function() {
+      // Get the selected theater and showtime values
+      const theaterSelect = document.querySelector('#theater');
+      const showtimeSelect = document.querySelector('#showtime');
+      const theaterValue = theaterSelect.options[theaterSelect.selectedIndex].value;
+      const showtimeValue = showtimeSelect.options[showtimeSelect.selectedIndex].value;
+
+      // Set the values of the hidden input fields
+      const theaterInput = document.querySelector('#theater_value');
+      theaterInput.value = theaterValue;
+      const showtimeInput = document.querySelector('#showtime_value');
+      showtimeInput.value = showtimeValue;
+    });
+  </script>
+{% endblock %}
